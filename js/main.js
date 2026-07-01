@@ -1,6 +1,12 @@
 // =========================
 // Año footer
 // =========================
+// =========================
+// Inicializar EmailJS
+// =========================
+emailjs.init({
+  publicKey: "QTpRaiLl_0QtDyvZB",
+});
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -32,25 +38,27 @@ if (form && msg) {
     msg.textContent = "Enviando...";
 
     try {
-      const res = await fetch("http://localhost:3000/api/contactos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message }),
-      });
 
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        msg.textContent = data.msg || "Error enviando. Inténtalo de nuevo.";
-        return;
-      }
-
-      msg.textContent = "¡Gracias! Tu mensaje se ha guardado ✅";
-      form.reset();
-    } catch (err) {
-      msg.textContent = "No se puede conectar con el servidor (¿está en localhost:3000?).";
-      console.error(err);
+  await emailjs.send(
+    "service_6asshws",
+    "template_ri0x1tl",
+    {
+      name: name,
+      email: email,
+      message: message,
     }
+  );
+
+  msg.textContent = "✅ ¡Gracias! Tu mensaje se ha enviado correctamente.";
+  form.reset();
+
+} catch (error) {
+
+  console.error(error);
+
+  msg.textContent = "❌ No se ha podido enviar el mensaje. Inténtalo de nuevo.";
+
+}
   });
 }
 
